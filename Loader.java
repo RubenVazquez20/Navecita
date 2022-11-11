@@ -7,7 +7,7 @@ class Loader{
       applet.init();
 
       // Construct a JFrame.
-      final JFrame frame = new JFrame("Exam");
+      final JFrame frame = new JFrame("Keyboard and Focus Demo");
 
       // Transfer the applet's context pane to the JFrame.
       frame.setContentPane(applet.getContentPane());
@@ -25,7 +25,7 @@ class Loader{
       // To pack the frame as tightly as possible
       // replace the setSize() message with the following.
       // frame.pack();
-      frame.setSize(800, 600);
+      frame.setSize(1000, 600);
 
       // Set the location of the frame.
       frame.setLocation(100, 100);

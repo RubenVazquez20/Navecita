@@ -7,26 +7,30 @@ import java.util.ArrayList;
 
 
 
-public class Space extends JApplet
+public class Exam extends JApplet
     implements KeyListener, FocusListener, MouseListener {
   // (Note: MouseListener is implemented only so that
   // the applet can request the input focus when
   // the user clicks on it.)
   // AQUI SE DECLARAN VARIABLES---------------------------------------
-  public int p1x, p2x, p3x, p1y, p2y, p3y, t, centroidx, centroidy, centerx, centery, angulo, dx, dy, sx, sy;
-  public int[] px = new int[8];
-  public int[] py = new int[8];
+  public double p1x, p2x, p3x, p1y, p2y, p3y, t, centroidx, centroidy, centerx, centery, angulo, dx, dy, sx, sy, rx, ry,aux;
+  public double[] px = new double[8];
+  public double[] py = new double[8];
   public int[] pxT = new int[8];
   public int[] pyT = new int[8];
   
   
-  public int[][] matrix = { { -6, -4, 1 }, { -3, 0, 1 }, { -1, 4, 1 }, { 0, 8, 1 }, { 1, 4, 1 }, { 3, 0, 1 },
+  public double[][] matrix = { { -6, -4, 1 }, { -3, 0, 1 }, { -1, 4, 1 }, { 0, 8, 1 }, { 1, 4, 1 }, { 3, 0, 1 },
   { 6, -4, 1 }, { 0, -6, 1 } };
-  public int[][] matrixB = { { 1, 0, dx }, { 0, 1, dy }, { 0, 0, 1 } };
-  public int[][] matrixS = { { sx, 0, 0 }, { 0, sy, 0 }, { 0, 0, 1 } };
+  public double[][] matrixB = { { 1, 0, dx }, { 0, 1, dy }, { 0, 0, 1 } };
+  public double[][] matrixS = { { sx, 0, 0 }, { 0, sy, 0 }, { 0, 0, 1 } };
+  public double[][] matrixR = { {rx ,-ry, 0 }, { ry, rx, 0 }, { 0, 0, 1 } };
+
+
   
-  ArrayList<List<Integer>> nueva = new ArrayList<List<Integer>>();
-  List<Integer> values = new ArrayList<Integer>();
+  
+  ArrayList<List<Double>> nueva = new ArrayList<List<Double>>();
+  List<Double> values = new ArrayList<Double>();
 
 
   boolean focussed = false; // True when this applet has input focus.
@@ -37,10 +41,13 @@ public class Space extends JApplet
 
   public void init() {
     angulo = 270;
-    dx = (int) (10 * Math.cos(angulo * Math.PI / 180));
-    dy = (int) (10 * Math.sin(angulo * Math.PI / 180));
-    sx = 1;
-    sy = 1;
+    aux = 0;
+    dx = (10 * Math.cos(angulo * Math.PI / 180));
+    dy = (10 * Math.sin(angulo * Math.PI / 180));
+    sx=1;
+    sy=1;
+    rx = Math.cos(angulo * Math.PI / 180);
+    ry = Math.sin(angulo * Math.PI / 180);
 
 
     System.out.print(values);
@@ -64,21 +71,21 @@ public class Space extends JApplet
     for (int i = 0; i < px.length; i++) {
       centroidx += px[i];
     }
-    centroidx = (int) centroidx / px.length;
+    centroidx = centroidx / px.length;
     System.out.print(centroidx);
 
     for (int i = 0; i < py.length; i++) {
       centroidy += py[i];
     }
-    centroidy = (int) centroidy / py.length;
+    centroidy = centroidy / py.length;
     System.out.print(centroidy);
 
     for (int i = 0; i < px.length; i++) {
-      pxT[i] = centerx + px[i];
+      pxT[i] = (int)(centerx + px[i]);
     }
 
     for (int i = 0; i < py.length; i++) {
-      pyT[i] = centery + py[i];
+      pyT[i] = (int)(centery + py[i]);
     }
 
     canvas = new DisplayPanel(); // Create drawing surface and
@@ -114,11 +121,11 @@ public class Space extends JApplet
       else
         g.setColor(Color.lightGray);
 
-      int width = getSize().width; // Width of the applet.
-      int height = getSize().height; // Height of the applet.
-      g.drawRect(0, 0, width - 1, height - 1);
-      g.drawRect(1, 1, width - 3, height - 3);
-      g.drawRect(2, 2, width - 5, height - 5);
+      double width = getSize().width; // Width of the applet.
+      double height = getSize().height; // Height of the applet.
+      g.drawRect(0, 0, (int)width - 1, (int)height - 1);
+      g.drawRect(1, 1, (int)width - 3, (int)height - 3);
+      g.drawRect(2, 2, (int)width - 5, (int)height - 5);
 
       /* Draw the square. */
       // aqui es donde ddebemos formar la figura
@@ -152,15 +159,14 @@ public class Space extends JApplet
     canvas.repaint(); // redraw without cyan border
   }
 
-  public void translate(int arrtemp[]){
+  public void translate(double arrtemp[]){
 
-    List<Integer> salida = new ArrayList<Integer>();
+    List<Double> salida = new ArrayList<Double>();
     salida.clear();
     for(int i = 0; i < matrixB.length; i++){
-      int suma = 0;
+      double suma = 0;
       for(int j = 0; j < matrixB[0].length; j++){
         // System.out.println(matrixB[i][j]);
-
         suma += matrixB[i][j] * arrtemp[j];
       }
       salida.add(suma);
@@ -169,12 +175,12 @@ public class Space extends JApplet
   
   }
 
-  public void scale(int arrtemp[]){
+  public void scale(double arrtemp[]){
 
-    List<Integer> salida = new ArrayList<Integer>();
+    List<Double> salida = new ArrayList<Double>();
     salida.clear();
     for(int i = 0; i < matrixS.length; i++){
-      int suma = 0;
+      double suma = 0;
       for(int j = 0; j < matrixS[0].length; j++){
         // System.out.println(matrixB[i][j]);
 
@@ -185,114 +191,249 @@ public class Space extends JApplet
     nueva.add(salida);
   }
 
+  public void rotate(double arrtemp[]){
+
+    List<Double> salida = new ArrayList<Double>();
+    salida.clear();
+    for(int i = 0; i < matrixS.length; i++){
+      double suma = 0;
+      for(int j = 0; j < matrixR[0].length; j++){
+        // System.out.println(matrixB[i][j]);7
+            suma += matrixR[i][j] * arrtemp[j];      
+        // suma += matrixR[i][j] * arrtemp[j];
+      }
+      salida.add(suma);
+    }
+    nueva.add(salida);
+  }
+
   public void keyTyped(KeyEvent evt) {
   
     char ch = evt.getKeyChar(); // The character typed.
 
-    if (ch == 'e' || ch == 'E') {
-      sx +=1;
-      sy +=1;
-      matrixS[0][0] = sx;
-      matrixS[1][1] = sy;
-      for(int i = 0; i < matrix.length; i++){
-        int[] temp = new int[3];
-        for(int j = 0; j < matrix[0].length; j++){
-          temp[j] = matrix[i][j];
+    if (ch == 'r' || ch == 'R') {
+      sx +=.1;
+      sy +=.1;
+      // Para verificar que solo crece hasta un 200%
+      if(sx<2){
+        matrixS[0][0] = 1.1;
+        matrixS[1][1] = 1.1;
+        for(int i = 0; i < matrix.length; i++){
+          double[] temp = new double[3];
+          for(int j = 0; j < matrix[0].length; j++){
+            temp[j] = matrix[i][j];
+          }
+          scale(temp);
         }
-        scale(temp);
-      }
 
 
-      for (int i = 0; i < nueva.size(); i++) {
-        px[i] = nueva.get(i).get(0);
-      }
-
-      for (int i = 0; i < nueva.size(); i++) {
-        py[i] = nueva.get(i).get(1);
-      }
-
-      for (int i = 0; i < px.length; i++) {
-        pxT[i] = centerx + px[i];
-      }
-
-      for (int i = 0; i < py.length; i++) {
-        pyT[i] = centery + py[i];
-      }
-
-      for(int i = 0; i< matrix.length; i++){
-        for(int j = 0; j < matrix[0].length; j++){
-          matrix[i][j] = nueva.get(i).get(j);
+        for (int i = 0; i < nueva.size(); i++) {
+          px[i] = nueva.get(i).get(0);
         }
+
+        for (int i = 0; i < nueva.size(); i++) {
+          py[i] = nueva.get(i).get(1);
+        }
+
+        for (int i = 0; i < px.length; i++) {
+          pxT[i] = (int)(centerx + px[i]);
+        }
+
+        for (int i = 0; i < py.length; i++) {
+          pyT[i] = (int)(centery + py[i]);
+        }
+
+        for(int i = 0; i< matrix.length; i++){
+          for(int j = 0; j < matrix[0].length; j++){
+            matrix[i][j] = nueva.get(i).get(j);
+          }
+        }
+
+        nueva.clear();
+
+        canvas.repaint();
+
+      }
+      else{
+        sx = 2;
+        sy = 2;
       }
 
-      nueva.clear();
 
-      canvas.repaint();
       
+            
     }
-    // squareColor = Color.blue;
-    else if (ch == 'd' || ch == 'D') {
-      sx = sx / 2;
-      sy = sy / 2;
-      matrixS[0][0] = sx;
-      matrixS[1][1] = sy;
-      for(int i = 0; i < matrix.length; i++){
-        int[] temp = new int[3];
-        for(int j = 0; j < matrix[0].length; j++){
-          temp[j] = matrix[i][j];
+    else if (ch == 'f' || ch == 'F') {
+      sx -= .1;
+      sy -= .1;
+      // Para verificar que no este por debajo del 100%
+      if(sx>1){
+        matrixS[0][0] = .9;
+        matrixS[1][1] = .9;
+        for(int i = 0; i < matrix.length; i++){
+          double[] temp = new double[3];
+          for(int j = 0; j < matrix[0].length; j++){
+            temp[j] = matrix[i][j];
+          }
+          scale(temp);
         }
-        scale(temp);
-      }
 
 
-      for (int i = 0; i < nueva.size(); i++) {
-        px[i] = nueva.get(i).get(0);
-      }
-
-      for (int i = 0; i < nueva.size(); i++) {
-        py[i] = nueva.get(i).get(1);
-      }
-
-      for (int i = 0; i < px.length; i++) {
-        pxT[i] = centerx + px[i];
-      }
-
-      for (int i = 0; i < py.length; i++) {
-        pyT[i] = centery + py[i];
-      }
-
-      for(int i = 0; i< matrix.length; i++){
-        for(int j = 0; j < matrix[0].length; j++){
-          matrix[i][j] = nueva.get(i).get(j);
+        for (int i = 0; i < nueva.size(); i++) {
+          px[i] = nueva.get(i).get(0);
         }
+
+        for (int i = 0; i < nueva.size(); i++) {
+          py[i] = nueva.get(i).get(1);
+        }
+
+        for (int i = 0; i < px.length; i++) {
+          pxT[i] = (int)(centerx + px[i]);
+        }
+
+        for (int i = 0; i < py.length; i++) {
+          pyT[i] = (int)(centery + py[i]);
+        }
+
+        for(int i = 0; i< matrix.length; i++){
+          for(int j = 0; j < matrix[0].length; j++){
+            matrix[i][j] = nueva.get(i).get(j);
+          }
+        }
+      
+
+        nueva.clear();
+
+        canvas.repaint();
+      }
+      else{
+        sx = 1;
+        sy = 1;
       }
 
-      nueva.clear();
-
-      canvas.repaint();
- 
     }
 
-    // else if (ch == 'R' || ch == 'r') {
-    // squareColor = Color.red;
-    // canvas.repaint();
-    // }
-    // else if (ch == 'K' || ch == 'k') {
-    // squareColor = Color.black;
-    // canvas.repaint();
-    // }
+    // Rotation
+    else  if (ch == 'e' || ch == 'E') {
+      angulo += 10;
+      aux = -9.5;
+      if(angulo == 360){
+        angulo = 0;
+      }
+      rx = Math.cos(aux * Math.PI / 180);
+      ry = Math.sin(aux * Math.PI / 180);
+      matrixR[0][0] = rx;
+      matrixR[1][1] = rx;
+      System.out.print(angulo);
+
+        matrixR[0][1] = ry * -1;
+        matrixR[1][0] = ry;
+
+        for(int i = 0; i < matrix.length; i++){
+          double[] temp = new double[3];
+          for(int j = 0; j < matrix[0].length; j++){
+            temp[j] = matrix[i][j];
+          }
+          rotate(temp);
+        }
+
+
+        for (int i = 0; i < nueva.size(); i++) {
+          px[i] = nueva.get(i).get(0);
+        }
+
+        for (int i = 0; i < nueva.size(); i++) {
+          py[i] = nueva.get(i).get(1);
+        }
+
+        for (int i = 0; i < px.length; i++) {
+          pxT[i] = (int)(centerx + px[i]);
+        }
+
+        for (int i = 0; i < py.length; i++) {
+          pyT[i] = (int)(centery + py[i]);
+        }
+
+        for(int i = 0; i< matrix.length; i++){
+          for(int j = 0; j < matrix[0].length; j++){
+            matrix[i][j] = nueva.get(i).get(j);
+          }
+        }
+      
+
+        nueva.clear();
+
+        canvas.repaint();
+
+      
+      }
+
+      else  if (ch == 'd' || ch == 'D') {
+        angulo -= 10;
+        aux = 9.5;
+        if(angulo == 0){
+          angulo = 360;
+        }
+        rx = Math.cos(aux * Math.PI / 180);
+        ry = Math.sin(aux * Math.PI / 180);
+        matrixR[0][0] = rx;
+        matrixR[1][1] = rx;
+
+        matrixR[0][1] = ry * -1;
+        matrixR[1][0] = ry;
+
+        for(int i = 0; i < matrix.length; i++){
+          double[] temp = new double[3];
+          for(int j = 0; j < matrix[0].length; j++){
+            temp[j] = matrix[i][j];
+          }
+          rotate(temp);
+        }
+
+
+        for (int i = 0; i < nueva.size(); i++) {
+          px[i] = nueva.get(i).get(0);
+        }
+
+        for (int i = 0; i < nueva.size(); i++) {
+          py[i] = nueva.get(i).get(1);
+        }
+
+        for (int i = 0; i < px.length; i++) {
+          pxT[i] = (int)(centerx + px[i]);
+        }
+
+        for (int i = 0; i < py.length; i++) {
+          pyT[i] = (int)(centery + py[i]);
+        }
+
+        for(int i = 0; i< matrix.length; i++){
+          for(int j = 0; j < matrix[0].length; j++){
+            matrix[i][j] = nueva.get(i).get(j);
+          }
+        }
+      
+
+        nueva.clear();
+
+        canvas.repaint();
+
+      
+      }
 
   }// end keyTyped()
   
   public void keyPressed(KeyEvent evt) {
     int key = evt.getKeyCode(); // keyboard code for the key that was pressed
-
+    System.out.println(angulo);
     if (key == KeyEvent.VK_LEFT) {
       
       if(angulo == 90){
         matrixB[0][2] = -10;
         matrixB[1][2] = 0;
       }
+      
+
       else if(angulo == 270){
         matrixB[0][2] = 10;
         matrixB[1][2] = 0;
@@ -301,18 +442,34 @@ public class Space extends JApplet
         matrixB[0][2] = 0;
         matrixB[1][2] = 10;
       }
+      else if(angulo > 0 && angulo < 90){
+        matrixB[0][2] = -10;
+        matrixB[1][2] = -10;
+      }
+      else if(angulo > 90 && angulo < 180){
+        matrixB[0][2] = -10;
+        matrixB[1][2] = 10;
+      }
+      else if(angulo > 180 && angulo < 270){
+        matrixB[0][2] = 10;
+        matrixB[1][2] = 10;
+      }
+      else if(angulo > 270 && angulo < 360){
+        matrixB[0][2] = 10;
+        matrixB[1][2] = -10;
+      }
       else if(angulo == 0 || angulo ==360){
         matrixB[0][2] = 0;
         matrixB[1][2] = -10;
       }
       else{
-        matrixB[0][2] = (int) (10 * Math.cos(angulo * Math.PI / 180));
-        matrixB[1][2] = (int) (10 * Math.sin(angulo * Math.PI / 180));
+        matrixB[0][2] = (10 * Math.cos(angulo * Math.PI / 180));
+        matrixB[1][2] = (10 * Math.sin(angulo * Math.PI / 180));
       }     
 
       
       for(int i = 0; i < matrix.length; i++){
-        int[] temp = new int[3];
+        double[] temp = new double[3];
         for(int j = 0; j < matrix[0].length; j++){
           temp[j] = matrix[i][j];
         }
@@ -329,11 +486,11 @@ public class Space extends JApplet
       }
 
       for (int i = 0; i < px.length; i++) {
-        pxT[i] = centerx + px[i];
+        pxT[i] = (int)(centerx + px[i]);
       }
 
       for (int i = 0; i < py.length; i++) {
-        pyT[i] = centery + py[i];
+        pyT[i] = (int)(centery + py[i]);
       }
 
       for(int i = 0; i< matrix.length; i++){
@@ -348,8 +505,24 @@ public class Space extends JApplet
     }
     else if (key == KeyEvent.VK_RIGHT) {
       if(angulo == 90){
-        matrixB[0][2] = 10;
+        matrixB[0][2] = 10;//dx
         matrixB[1][2] = 0;
+      }
+      else if(angulo > 0 && angulo < 90){
+        matrixB[0][2] = 10;
+        matrixB[1][2] = 10;
+      }
+      else if(angulo > 90 && angulo < 180){
+        matrixB[0][2] = 10;
+        matrixB[1][2] = -10;
+      }
+      else if(angulo > 180 && angulo < 270){
+        matrixB[0][2] = -10;
+        matrixB[1][2] = -10;
+      }
+      else if(angulo > 270 && angulo < 360){
+        matrixB[0][2] = -10;
+        matrixB[1][2] = 10;
       }
       else if(angulo == 270){
         matrixB[0][2] = -10;
@@ -364,13 +537,13 @@ public class Space extends JApplet
         matrixB[1][2] = 10;
       }
       else{
-        matrixB[0][2] = (int) (10 * Math.cos(angulo * Math.PI / 180));
-        matrixB[1][2] = (int) (10 * Math.sin(angulo * Math.PI / 180));
+        matrixB[0][2] = (10 * Math.cos(angulo * Math.PI / 180));
+        matrixB[1][2] = (10 * Math.sin(angulo * Math.PI / 180));
       }     
 
       
       for(int i = 0; i < matrix.length; i++){
-        int[] temp = new int[3];
+        double[] temp = new double[3];
         for(int j = 0; j < matrix[0].length; j++){
           temp[j] = matrix[i][j];
         }
@@ -387,11 +560,11 @@ public class Space extends JApplet
       }
 
       for (int i = 0; i < px.length; i++) {
-        pxT[i] = centerx + px[i];
+        pxT[i] = (int)(centerx + px[i]);
       }
 
       for (int i = 0; i < py.length; i++) {
-        pyT[i] = centery + py[i];
+        pyT[i] = (int)(centery + py[i]);
       }
 
       for(int i = 0; i< matrix.length; i++){
@@ -406,12 +579,12 @@ public class Space extends JApplet
      } 
     else if (key == KeyEvent.VK_UP) {
       if(angulo == 90){
-        matrixB[0][2] = (int) (10 * Math.cos(angulo * Math.PI / 180));
-        matrixB[1][2] = (int) (10 * Math.sin(angulo * Math.PI / 180)) * -1;
+        matrixB[0][2] = (10 * Math.cos(angulo * Math.PI / 180));
+        matrixB[1][2] = (10 * Math.sin(angulo * Math.PI / 180)) * -1;
       }
       else if(angulo == 270){
-        matrixB[0][2] = (int) (10 * Math.cos(angulo * Math.PI / 180));
-        matrixB[1][2] = (int) (10 * Math.sin(angulo * Math.PI / 180)) * -1;
+        matrixB[0][2] = (10 * Math.cos(angulo * Math.PI / 180));
+        matrixB[1][2] = (10 * Math.sin(angulo * Math.PI / 180)) * -1;
       }
       else if(angulo == 180){
         matrixB[0][2] = -10;
@@ -421,14 +594,30 @@ public class Space extends JApplet
         matrixB[0][2] = 10;
         matrixB[1][2] = 0;
       }
+      else if(angulo > 0 && angulo < 90){
+        matrixB[0][2] = 10;
+        matrixB[1][2] = -10;
+      }
+      else if(angulo > 90 && angulo < 180){
+        matrixB[0][2] = -10;
+        matrixB[1][2] = -10;
+      }
+      else if(angulo > 180 && angulo < 270){
+        matrixB[0][2] = -10;
+        matrixB[1][2] = 10;
+      }
+      else if(angulo > 270 && angulo < 360){
+        matrixB[0][2] = 10;
+        matrixB[1][2] = 10;
+      }
       else{
-        matrixB[0][2] = (int) (10 * Math.cos(angulo * Math.PI / 180));
-        matrixB[1][2] = (int) (10 * Math.sin(angulo * Math.PI / 180));
+        matrixB[0][2] = (10 * Math.cos(angulo * Math.PI / 180));
+        matrixB[1][2] = (10 * Math.sin(angulo * Math.PI / 180));
       }     
 
       
       for(int i = 0; i < matrix.length; i++){
-        int[] temp = new int[3];
+        double[] temp = new double[3];
         for(int j = 0; j < matrix[0].length; j++){
           temp[j] = matrix[i][j];
         }
@@ -445,11 +634,11 @@ public class Space extends JApplet
       }
 
       for (int i = 0; i < px.length; i++) {
-        pxT[i] = centerx + px[i];
+        pxT[i] = (int)(centerx + px[i]);
       }
 
       for (int i = 0; i < py.length; i++) {
-        pyT[i] = centery + py[i];
+        pyT[i] = (int)(centery + py[i]);
       }
 
       for(int i = 0; i< matrix.length; i++){
@@ -465,12 +654,12 @@ public class Space extends JApplet
     } 
     else if (key == KeyEvent.VK_DOWN) {
     if(angulo == 90){
-        matrixB[0][2] = (int) (10 * Math.cos(angulo * Math.PI / 180));
-        matrixB[1][2] = (int) (10 * Math.sin(angulo * Math.PI / 180));
+        matrixB[0][2] = (10 * Math.cos(angulo * Math.PI / 180));
+        matrixB[1][2] = (10 * Math.sin(angulo * Math.PI / 180));
       }
       else if(angulo == 270){
-        matrixB[0][2] = (int) (10 * Math.cos(angulo * Math.PI / 180));
-        matrixB[1][2] = (int) (10 * Math.sin(angulo * Math.PI / 180));
+        matrixB[0][2] = (10 * Math.cos(angulo * Math.PI / 180));
+        matrixB[1][2] = (10 * Math.sin(angulo * Math.PI / 180));
       }
       else if(angulo == 180){
         matrixB[0][2] = 10;
@@ -480,14 +669,30 @@ public class Space extends JApplet
         matrixB[0][2] = -10;
         matrixB[1][2] = 0;
       }
+      else if(angulo > 0 && angulo < 90){
+        matrixB[0][2] = -10;
+        matrixB[1][2] = 10;
+      }
+      else if(angulo > 90 && angulo < 180){
+        matrixB[0][2] = 10;
+        matrixB[1][2] = 10;
+      }
+      else if(angulo > 180 && angulo < 270){
+        matrixB[0][2] = 10;
+        matrixB[1][2] = -10;
+      }
+      else if(angulo > 270 && angulo < 360){
+        matrixB[0][2] = -10;
+        matrixB[1][2] = -10;
+      }
       else{
-        matrixB[0][2] = (int) (10 * Math.cos(angulo * Math.PI / 180));
-        matrixB[1][2] = (int) (10 * Math.sin(angulo * Math.PI / 180));
+        matrixB[0][2] = (10 * Math.cos(angulo * Math.PI / 180));
+        matrixB[1][2] = (10 * Math.sin(angulo * Math.PI / 180));
       }     
 
       
       for(int i = 0; i < matrix.length; i++){
-        int[] temp = new int[3];
+        double[] temp = new double[3];
         for(int j = 0; j < matrix[0].length; j++){
           temp[j] = matrix[i][j];
         }
@@ -504,11 +709,11 @@ public class Space extends JApplet
       }
 
       for (int i = 0; i < px.length; i++) {
-        pxT[i] = centerx + px[i];
+        pxT[i] = (int)(centerx + px[i]);
       }
 
       for (int i = 0; i < py.length; i++) {
-        pyT[i] = centery + py[i];
+        pyT[i] = (int)(centery + py[i]);
       }
 
       for(int i = 0; i< matrix.length; i++){
